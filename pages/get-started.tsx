@@ -11,6 +11,7 @@ export default function GetStarted() {
     titleInHand: false
   });
   const [submitted, setSubmitted] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value, type, checked } = e.target;
@@ -20,11 +21,26 @@ export default function GetStarted() {
     });
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setSubmitted(true);
-    // Here you could send the form data to an API endpoint
+    setError(null);
+    try {
+      const response = await fetch("/api/submit-lead", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(form)
+      });
+      if (response.ok) {
+        setSubmitted(true);
+      } else {
+        const data = await response.json();
+        setError(data.error || "Submission failed. Please try again.");
+      }
+    } catch (err) {
+      setError("Submission failed. Please try again.");
+    }
   };
+
 
   return (
     <>
@@ -35,6 +51,9 @@ export default function GetStarted() {
       <div style={{ minHeight: "100vh", display: "flex", flexDirection: "column", justifyContent: "center", alignItems: "center", background: "#f8fafc" }}>
         <main style={{ width: "100%", maxWidth: 400, background: "#fff", borderRadius: 12, boxShadow: "0 2px 12px rgba(0,0,0,0.06)", padding: "2.5rem 2rem", textAlign: "center" }}>
           <h2 style={{ fontSize: "2rem", fontWeight: 700, marginBottom: "1.5rem" }}>Get Started</h2>
+          {error && (
+            <div style={{ color: "#d90429", marginBottom: 16, fontWeight: 600 }}>{error}</div>
+          )}
           {submitted ? (
             <div style={{ color: "#0070f3", fontWeight: 600, textAlign: "left" }}>
               <div>Thank you! Here is your submission:</div>
