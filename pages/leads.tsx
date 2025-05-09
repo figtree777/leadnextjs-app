@@ -23,13 +23,38 @@ export default function LeadsCatalog() {
     // Check if user is logged in
     const session = localStorage.getItem("session");
     if (!session) {
+      console.log("No session found, redirecting to login");
       router.push("/login?redirect=leads");
       return;
     }
 
+    console.log("Session found, fetching leads");
+    
+    // Create a test lead first to ensure we have data
+    const createTestLead = async () => {
+      try {
+        const response = await fetch("/api/create-test-lead", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" }
+        });
+        
+        if (!response.ok) {
+          console.warn("Could not create test lead, but continuing");
+        } else {
+          console.log("Test lead created successfully");
+        }
+      } catch (err) {
+        console.warn("Error creating test lead:", err);
+      }
+    };
+
     // Fetch leads
     const fetchLeads = async () => {
       try {
+        // First create a test lead
+        await createTestLead();
+        
+        // Then fetch all leads
         const response = await fetch("/api/leads");
         
         if (!response.ok) {
@@ -38,9 +63,11 @@ export default function LeadsCatalog() {
         }
         
         const data = await response.json();
+        console.log("Leads fetched successfully:", data);
         setLeads(data);
         setLoading(false);
       } catch (err: any) {
+        console.error("Error fetching leads:", err);
         setError(err.message);
         setLoading(false);
       }

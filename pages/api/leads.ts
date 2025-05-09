@@ -23,18 +23,19 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     // Get Supabase admin client
     const supabase = getSupabaseAdmin();
     
-    // Check for authentication (optional - RLS will handle this at the database level)
-    // You can add session validation here if needed
+    console.log("Fetching leads from database...");
     
     // Fetch leads with all columns
     const { data, error } = await supabase
       .from('leads')
-      .select('id, make, model, zip, title_in_hand, submitted_at, phone, vin');
+      .select('*');
       
     if (error) {
       console.error("Supabase query error:", error);
       return res.status(500).json({ error: error.message || "Failed to fetch leads" });
     }
+    
+    console.log(`Found ${data?.length || 0} leads in database`);
     
     if (!data || data.length === 0) {
       return res.status(200).json([]);

@@ -52,9 +52,13 @@ export default function Login() {
         type: "success" 
       });
       
-      // Redirect to home page after successful login
+      // Check if there's a redirect in the URL query
+      const redirectPath = router.query.redirect as string;
+      const targetPath = redirectPath ? `/${redirectPath}` : "/";
+      
+      // Redirect after successful login
       setTimeout(() => {
-        router.push("/");
+        router.push(targetPath);
       }, 1500);
       
     } catch (error: any) {
