@@ -17,6 +17,8 @@ export default function LeadsCatalog() {
   const [leads, setLeads] = useState<Lead[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [creating, setCreating] = useState(false);
+  const [deleting, setDeleting] = useState<number | null>(null);
   const router = useRouter();
 
   useEffect(() => {
@@ -76,6 +78,59 @@ export default function LeadsCatalog() {
     fetchLeads();
   }, [router]);
 
+  // Delete a lead
+  const deleteLead = async (id: number) => {
+    try {
+      setDeleting(id);
+      const response = await fetch(`/api/delete-lead?id=${id}`, {
+        method: "DELETE"
+      });
+      
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.error || "Failed to delete lead");
+      }
+      
+      // Remove the lead from the state
+      setLeads(leads.filter(lead => lead.id !== id));
+      setDeleting(null);
+    } catch (err: any) {
+      console.error("Error deleting lead:", err);
+      setError(err.message);
+      setDeleting(null);
+    }
+  };
+
+  // Create a test lead
+  const createTestLead = async () => {
+    try {
+      setCreating(true);
+      const response = await fetch("/api/create-test-lead", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" }
+      });
+      
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.error || "Failed to create test lead");
+      }
+      
+      const data = await response.json();
+      console.log("Test lead created:", data);
+      
+      // Refresh leads list
+      const leadsResponse = await fetch("/api/leads");
+      const leadsData = await leadsResponse.json();
+      setLeads(leadsData);
+      
+      setCreating(false);
+    } catch (err: any) {
+      console.error("Error creating test lead:", err);
+      setError(err.message);
+      setCreating(false);
+    }
+  };
+  
   // Format date for display
   const formatDate = (dateString: string) => {
     if (!dateString) return "N/A";
@@ -93,7 +148,28 @@ export default function LeadsCatalog() {
         <meta name="description" content="Browse available leads" />
       </Head>
       <div style={{ padding: "2rem", maxWidth: "1200px", margin: "0 auto" }}>
-        <h1 style={{ fontSize: "2rem", fontWeight: 700, marginBottom: "1.5rem" }}>Leads Catalog</h1>
+        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "1.5rem" }}>
+          <h1 style={{ fontSize: "2rem", fontWeight: 700, margin: 0 }}>Leads Catalog</h1>
+          
+          <button 
+            onClick={createTestLead}
+            disabled={creating}
+            style={{ 
+              background: "var(--primary-color, #0070f3)", 
+              color: "white", 
+              border: "none", 
+              borderRadius: "0.5rem", 
+              padding: "0.5rem 1rem", 
+              fontSize: "0.9rem", 
+              fontWeight: 500, 
+              cursor: creating ? "not-allowed" : "pointer",
+              opacity: creating ? 0.7 : 1,
+              transition: "all 0.2s ease"
+            }}
+          >
+            {creating ? "Creating..." : "Create Test Lead"}
+          </button>
+        </div>
         
         {loading ? (
           <div style={{ textAlign: "center", padding: "2rem" }}>
@@ -150,23 +226,42 @@ export default function LeadsCatalog() {
                   <span style={{ fontWeight: 500 }}>Contact:</span> <span style={{ color: "var(--text-secondary)" }}>{lead.phone}</span>
                 </div>
                 
-                <button 
-                  style={{ 
-                    marginTop: "1rem",
-                    background: "#0070f3", 
-                    color: "#fff", 
-                    border: "none", 
-                    borderRadius: "6px", 
-                    padding: "0.6rem 1rem", 
-                    fontSize: "0.9rem", 
-                    fontWeight: 500, 
-                    cursor: "pointer",
-                    width: "100%"
-                  }}
-                  onClick={() => alert("Contact the seller to get full details!")}
-                >
-                  Request Full Details
-                </button>
+                <div style={{ display: "flex", gap: "0.5rem", marginTop: "1rem" }}>
+                  <button 
+                    style={{ 
+                      flex: "1",
+                      background: "#0070f3", 
+                      color: "#fff", 
+                      border: "none", 
+                      borderRadius: "6px", 
+                      padding: "0.6rem 1rem", 
+                      fontSize: "0.9rem", 
+                      fontWeight: 500, 
+                      cursor: "pointer"
+                    }}
+                    onClick={() => alert("Contact the seller to get full details!")}
+                  >
+                    Request Details
+                  </button>
+                  
+                  <button 
+                    style={{ 
+                      background: "#d90429", 
+                      color: "#fff", 
+                      border: "none", 
+                      borderRadius: "6px", 
+                      padding: "0.6rem 1rem", 
+                      fontSize: "0.9rem", 
+                      fontWeight: 500, 
+                      cursor: deleting === lead.id ? "not-allowed" : "pointer",
+                      opacity: deleting === lead.id ? 0.7 : 1
+                    }}
+                    onClick={() => deleteLead(lead.id)}
+                    disabled={deleting === lead.id}
+                  >
+                    {deleting === lead.id ? "Deleting..." : "Delete"}
+                  </button>
+                </div>
               </div>
             ))}
           </div>
