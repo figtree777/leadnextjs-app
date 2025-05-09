@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import Link from "next/link";
 
 const THEME_KEY = "theme-preference";
 
@@ -33,11 +34,10 @@ export default function Navbar() {
     document.documentElement.setAttribute("data-theme", applied);
   };
 
-  const handleChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    const selected = e.target.value as Theme;
-    setTheme(selected);
-    localStorage.setItem(THEME_KEY, selected);
-    applyTheme(selected);
+  const handleThemeChange = (newTheme: Theme) => {
+    setTheme(newTheme);
+    localStorage.setItem(THEME_KEY, newTheme);
+    applyTheme(newTheme);
   };
 
   // Listen for system theme changes if in system mode
@@ -56,20 +56,85 @@ export default function Navbar() {
     <nav style={{
       width: "100%",
       padding: "1rem 2rem",
-      background: "var(--navbar-bg, #fff)",
-      borderBottom: "1px solid #eaeaea",
+      background: "var(--navbar-bg)",
+      borderBottom: "1px solid var(--border-color)",
       display: "flex",
       alignItems: "center",
-      justifyContent: "space-between"
+      justifyContent: "space-between",
+      boxShadow: "0 2px 8px rgba(0,0,0,0.05)"
     }}>
-      <span style={{ fontWeight: 700, fontSize: "1.2rem" }}>leadnextjs</span>
-      <div>
-        <label htmlFor="theme-select" style={{ marginRight: 8 }}>Theme:</label>
-        <select id="theme-select" value={theme} onChange={handleChange} style={{ fontSize: "1rem", padding: "0.25rem 0.5rem" }}>
-          <option value="light">Light</option>
-          <option value="dark">Dark</option>
-          <option value="system">System</option>
-        </select>
+      <Link href="/" style={{ textDecoration: "none", color: "var(--text-primary)" }}>
+        <span style={{ 
+          fontWeight: 700, 
+          fontSize: "1.3rem", 
+          cursor: "pointer",
+          background: "linear-gradient(90deg, #0070f3, #00c6ff)",
+          WebkitBackgroundClip: "text",
+          WebkitTextFillColor: "transparent",
+          letterSpacing: "-0.5px"
+        }}>leadnextjs</span>
+      </Link>
+      
+      <div style={{ display: "flex", alignItems: "center" }}>
+        <div style={{ 
+          display: "flex", 
+          alignItems: "center", 
+          background: "var(--card-bg)", 
+          padding: "0.4rem", 
+          borderRadius: "2rem",
+          border: "1px solid var(--border-color)"
+        }}>
+          {/* Light mode option */}
+          <button 
+            onClick={() => handleThemeChange("light")} 
+            style={{
+              background: theme === "light" ? "var(--primary-color, #0070f3)" : "transparent",
+              color: theme === "light" ? "white" : "var(--text-secondary)",
+              border: "none",
+              borderRadius: "1.5rem",
+              padding: "0.5rem 0.8rem",
+              cursor: "pointer",
+              fontSize: "1rem",
+              transition: "all 0.2s ease"
+            }}
+          >
+            ☀️
+          </button>
+          
+          {/* System option */}
+          <button 
+            onClick={() => handleThemeChange("system")} 
+            style={{
+              background: theme === "system" ? "var(--primary-color, #0070f3)" : "transparent",
+              color: theme === "system" ? "white" : "var(--text-secondary)",
+              border: "none",
+              borderRadius: "1.5rem",
+              padding: "0.5rem 0.8rem",
+              cursor: "pointer",
+              fontSize: "1rem",
+              transition: "all 0.2s ease"
+            }}
+          >
+            ⚙️
+          </button>
+          
+          {/* Dark mode option */}
+          <button 
+            onClick={() => handleThemeChange("dark")} 
+            style={{
+              background: theme === "dark" ? "var(--primary-color, #0070f3)" : "transparent",
+              color: theme === "dark" ? "white" : "var(--text-secondary)",
+              border: "none",
+              borderRadius: "1.5rem",
+              padding: "0.5rem 0.8rem",
+              cursor: "pointer",
+              fontSize: "1rem",
+              transition: "all 0.2s ease"
+            }}
+          >
+            🌙
+          </button>
+        </div>
       </div>
     </nav>
   );
