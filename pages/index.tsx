@@ -24,7 +24,7 @@ export default function Home() {
       </Head>
       <div className={`${styles.page} ${geistSans.variable} ${geistMono.variable}`}
         style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center' }}>
-        <main className={styles.main} style={{ width: '100%', maxWidth: 600, textAlign: 'center', padding: '4rem 2rem' }}>
+        <main className={styles.main} style={{ width: '100%', maxWidth: 600, textAlign: 'center', padding: '4rem 2rem', backgroundColor: 'var(--container-bg)', borderRadius: '12px' }}>
           <h1 style={{ fontSize: '3rem', fontWeight: 700, marginBottom: '1rem', letterSpacing: '-1px' }}>leadnextjs</h1>
           <p style={{ fontSize: '1.25rem', color: '#555', marginBottom: '2rem' }}>
             A modern Next.js starter for your next big idea. Fast, flexible, and production ready.

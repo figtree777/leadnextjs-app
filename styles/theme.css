@@ -7,6 +7,7 @@
   --navbar-bg: #ffffff;
   --card-bg: #f9f9f9;
   --border-color: #eaeaea;
+  --container-bg: #fff8e1; /* Pale yellow for containers in light mode */
 }
 
 [data-theme="dark"] {
@@ -18,6 +19,7 @@
   --navbar-bg: #1e1e1e;
   --card-bg: #252525;
   --border-color: #333333;
+  --container-bg: #2a2a2a; /* Tasteful gray for containers in dark mode */
 }
 
 body {
@@ -30,6 +32,29 @@ select, button, input, textarea {
   background-color: var(--card-bg);
   color: var(--text-primary);
   border: 1px solid var(--border-color);
+}
+
+/* Global container styles */
+.container, 
+[class*="container"],
+.card,
+[class*="card"],
+.box,
+[class*="box"],
+.panel,
+[class*="panel"] {
+  background-color: var(--container-bg);
+  color: var(--text-primary);
+  border-radius: 8px;
+  padding: 1rem;
+  margin-bottom: 1rem;
+  transition: background-color 0.3s ease;
+}
+
+/* Add a class for main content area */
+.main-content {
+  padding: 2rem;
+  min-height: calc(100vh - 60px);
 }
 
 a {
