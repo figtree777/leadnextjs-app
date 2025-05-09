@@ -24,39 +24,20 @@ export default function GetStarted() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError(null);
-    
-    // Get form data for Netlify
-    const formElement = e.target as HTMLFormElement;
-    const formData = new FormData(formElement);
-    
     try {
-      // Submit to Netlify forms using the recommended workaround
-      const response = await fetch("/__forms.html", {
+      const response = await fetch("/api/submit-lead", {
         method: "POST",
-        headers: { "Content-Type": "application/x-www-form-urlencoded" },
-        body: new URLSearchParams(formData as any).toString()
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(form)
       });
-      
       if (response.ok) {
         setSubmitted(true);
-        
-        // You can still send to your API if needed
-        try {
-          await fetch("/api/submit-lead", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify(form)
-          });
-        } catch (apiErr) {
-          // Silent fail - the form was already submitted to Netlify
-          console.error("API submission error:", apiErr);
-        }
       } else {
-        setError("Submission failed. Please try again.");
+        const data = await response.json();
+        setError(data.error || "Submission failed. Please try again.");
       }
     } catch (err) {
       setError("Submission failed. Please try again.");
-      console.error("Form submission error:", err);
     }
   };
 
@@ -86,18 +67,7 @@ export default function GetStarted() {
               </ul>
             </div>
           ) : (
-            <form 
-              name="vehicle-lead" 
-              method="POST" 
-              data-netlify="true" 
-              netlify-honeypot="bot-field"
-              onSubmit={handleSubmit}
-            >
-              {/* Hidden fields needed for Netlify form detection */}
-              <input type="hidden" name="form-name" value="vehicle-lead" />
-              <p style={{ display: 'none' }}>
-                <label>Don't fill this out if you're human: <input name="bot-field" /></label>
-              </p>
+            <form onSubmit={handleSubmit}>
               <div style={{ marginBottom: "1.25rem", textAlign: "left" }}>
                 <label htmlFor="vin" style={{ display: "block", marginBottom: 6, color: "#333" }}>VIN</label>
                 <input
