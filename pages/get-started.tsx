@@ -30,8 +30,8 @@ export default function GetStarted() {
     const formData = new FormData(formElement);
     
     try {
-      // Submit to Netlify forms
-      const response = await fetch("/", {
+      // Submit to Netlify forms using the recommended workaround
+      const response = await fetch("/__forms.html", {
         method: "POST",
         headers: { "Content-Type": "application/x-www-form-urlencoded" },
         body: new URLSearchParams(formData as any).toString()
