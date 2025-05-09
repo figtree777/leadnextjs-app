@@ -17,13 +17,13 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   }
 
   // Validate env variables
-  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
-  const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+  const supabaseUrl = process.env.SUPABASE_DATABASE_URL;
+  const supabaseKey = process.env.SUPABASE_ANON_KEY;
 
   if (!supabaseUrl || !supabaseKey) {
     console.error("Missing Supabase environment variables:", {
-      NEXT_PUBLIC_SUPABASE_URL: supabaseUrl,
-      NEXT_PUBLIC_SUPABASE_ANON_KEY: supabaseKey,
+      SUPABASE_DATABASE_URL: supabaseUrl,
+      SUPABASE_ANON_KEY: supabaseKey,
     });
     return res.status(500).json({ error: "Supabase environment variables are not set. Check your .env.local and deployment settings." });
   }
