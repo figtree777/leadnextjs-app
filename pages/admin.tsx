@@ -1,5 +1,6 @@
 import Head from "next/head";
 import { useEffect, useState } from "react";
+import { useRouter } from "next/router";
 
 interface Lead {
   id: number;
@@ -16,16 +17,34 @@ export default function Admin() {
   const [leads, setLeads] = useState<Lead[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const router = useRouter();
+
+  // Simple client-side auth check
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      const token = localStorage.getItem("admin_session");
+      if (!token) {
+        router.replace("/admin-login");
+        return;
+      }
+    }
+  }, [router]);
 
   useEffect(() => {
-    fetch("/api/get-leads")
-      .then(res => res.json())
+    const token = typeof window !== "undefined" ? localStorage.getItem("admin_session") : null;
+    fetch("/api/get-leads", {
+      headers: token ? { Authorization: `Bearer ${token}` } : undefined
+    })
+      .then(res => {
+        if (res.status === 401) throw new Error("Unauthorized");
+        return res.json();
+      })
       .then(data => {
         setLeads(data.leads || []);
         setLoading(false);
       })
-      .catch(() => {
-        setError("Failed to load leads.");
+      .catch((err) => {
+        setError(err.message || "Failed to load leads.");
         setLoading(false);
       });
   }, []);
