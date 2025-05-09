@@ -5,11 +5,16 @@ import { createClient } from '@supabase/supabase-js';
  * This should only be used in API routes or server-side code, never in client-side code.
  */
 export const getSupabaseAdmin = () => {
-  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
-  const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+  // Try NEXT_PUBLIC_ prefixed variables first, then fall back to non-prefixed ones
+  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || process.env.NEXT_PUBLIC_SUPABASE_DATABASE_URL || process.env.SUPABASE_DATABASE_URL;
+  const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || process.env.SUPABASE_ANON_KEY;
   
-  if (!supabaseUrl || !supabaseKey) {
-    throw new Error('Missing Supabase environment variables');
+  if (!supabaseUrl) {
+    throw new Error('Missing Supabase URL environment variable. Please set NEXT_PUBLIC_SUPABASE_URL, NEXT_PUBLIC_SUPABASE_DATABASE_URL, or SUPABASE_DATABASE_URL');
+  }
+  
+  if (!supabaseKey) {
+    throw new Error('Missing Supabase key environment variable. Please set NEXT_PUBLIC_SUPABASE_ANON_KEY or SUPABASE_ANON_KEY');
   }
   
   return createClient(supabaseUrl, supabaseKey);
