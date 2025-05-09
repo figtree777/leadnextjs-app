@@ -33,7 +33,8 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     
     // Filter out test leads unless explicitly requested
     if (!includeTestLeads) {
-      query = query.eq('is_test', false).is('is_test', null);
+      // This query will get records where is_test is false OR is_test is null
+      query = query.or('is_test.is.null,is_test.eq.false');
     }
     
     // Execute the query
