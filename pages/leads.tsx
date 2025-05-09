@@ -21,6 +21,33 @@ export default function LeadsCatalog() {
   const [deleting, setDeleting] = useState<number | null>(null);
   const router = useRouter();
 
+  const [includeTestLeads, setIncludeTestLeads] = useState(false);
+
+  // Fetch leads function
+  const fetchLeads = async (includeTests = false) => {
+    try {
+      setLoading(true);
+      setError(null);
+      
+      // Fetch all leads with the test filter parameter
+      const response = await fetch(`/api/leads?includeTest=${includeTests}`);
+      
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.error || "Failed to fetch leads");
+      }
+      
+      const data = await response.json();
+      console.log("Leads fetched successfully:", data);
+      setLeads(data);
+      setLoading(false);
+    } catch (err: any) {
+      console.error("Error fetching leads:", err);
+      setError(err.message);
+      setLoading(false);
+    }
+  };
+
   useEffect(() => {
     // Check if user is logged in
     const session = localStorage.getItem("session");
@@ -31,52 +58,13 @@ export default function LeadsCatalog() {
     }
 
     console.log("Session found, fetching leads");
-    
-    // Create a test lead first to ensure we have data
-    const createTestLead = async () => {
-      try {
-        const response = await fetch("/api/create-test-lead", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" }
-        });
-        
-        if (!response.ok) {
-          console.warn("Could not create test lead, but continuing");
-        } else {
-          console.log("Test lead created successfully");
-        }
-      } catch (err) {
-        console.warn("Error creating test lead:", err);
-      }
-    };
-
-    // Fetch leads
-    const fetchLeads = async () => {
-      try {
-        // First create a test lead
-        await createTestLead();
-        
-        // Then fetch all leads
-        const response = await fetch("/api/leads");
-        
-        if (!response.ok) {
-          const errorData = await response.json();
-          throw new Error(errorData.error || "Failed to fetch leads");
-        }
-        
-        const data = await response.json();
-        console.log("Leads fetched successfully:", data);
-        setLeads(data);
-        setLoading(false);
-      } catch (err: any) {
-        console.error("Error fetching leads:", err);
-        setError(err.message);
-        setLoading(false);
-      }
-    };
-
-    fetchLeads();
-  }, [router]);
+    fetchLeads(includeTestLeads);
+  }, [router, includeTestLeads]);
+  
+  // Toggle test leads visibility
+  const toggleTestLeads = () => {
+    setIncludeTestLeads(!includeTestLeads);
+  };
 
   // Delete a lead
   const deleteLead = async (id: number) => {
@@ -151,24 +139,42 @@ export default function LeadsCatalog() {
         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "1.5rem" }}>
           <h1 style={{ fontSize: "2rem", fontWeight: 700, margin: 0 }}>Leads Catalog</h1>
           
-          <button 
-            onClick={createTestLead}
-            disabled={creating}
-            style={{ 
-              background: "var(--primary-color, #0070f3)", 
-              color: "white", 
-              border: "none", 
-              borderRadius: "0.5rem", 
-              padding: "0.5rem 1rem", 
-              fontSize: "0.9rem", 
-              fontWeight: 500, 
-              cursor: creating ? "not-allowed" : "pointer",
-              opacity: creating ? 0.7 : 1,
-              transition: "all 0.2s ease"
-            }}
-          >
-            {creating ? "Creating..." : "Create Test Lead"}
-          </button>
+          <div style={{ display: "flex", gap: "1rem" }}>
+            <label style={{ 
+              display: "flex", 
+              alignItems: "center", 
+              gap: "0.5rem",
+              cursor: "pointer",
+              fontSize: "0.9rem"
+            }}>
+              <input 
+                type="checkbox" 
+                checked={includeTestLeads} 
+                onChange={toggleTestLeads}
+                style={{ cursor: "pointer" }}
+              />
+              Show Test Leads
+            </label>
+            
+            <button 
+              onClick={createTestLead}
+              disabled={creating}
+              style={{ 
+                background: "var(--primary-color, #0070f3)", 
+                color: "white", 
+                border: "none", 
+                borderRadius: "0.5rem", 
+                padding: "0.5rem 1rem", 
+                fontSize: "0.9rem", 
+                fontWeight: 500, 
+                cursor: creating ? "not-allowed" : "pointer",
+                opacity: creating ? 0.7 : 1,
+                transition: "all 0.2s ease"
+              }}
+            >
+              {creating ? "Creating..." : "Create Test Lead"}
+            </button>
+          </div>
         </div>
         
         {loading ? (

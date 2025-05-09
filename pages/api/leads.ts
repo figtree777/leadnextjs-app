@@ -10,6 +10,7 @@ interface Lead {
   submitted_at: string;
   phone: string;
   vin: string;
+  is_test?: boolean;
   [key: string]: any; // For any additional fields
 }
 
@@ -23,12 +24,20 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     // Get Supabase admin client
     const supabase = getSupabaseAdmin();
     
-    console.log("Fetching leads from database...");
+    // Check if we should include test leads
+    const includeTestLeads = req.query.includeTest === 'true';
+    console.log(`Fetching leads from database... ${includeTestLeads ? '(including test leads)' : '(excluding test leads)'}`);
     
-    // Fetch leads with all columns
-    const { data, error } = await supabase
-      .from('leads')
-      .select('*');
+    // Build the query
+    let query = supabase.from('leads').select('*');
+    
+    // Filter out test leads unless explicitly requested
+    if (!includeTestLeads) {
+      query = query.eq('is_test', false).is('is_test', null);
+    }
+    
+    // Execute the query
+    const { data, error } = await query;
       
     if (error) {
       console.error("Supabase query error:", error);
