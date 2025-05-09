@@ -54,7 +54,10 @@ export default function Login() {
       
       // Check if there's a redirect in the URL query
       const redirectPath = router.query.redirect as string;
-      const targetPath = redirectPath ? `/${redirectPath}` : "/";
+      
+      // Make sure we're using a relative path to avoid localhost redirects
+      // Default to the leads page instead of the homepage
+      const targetPath = redirectPath ? `/${redirectPath.replace(/^\//g, '')}` : "/leads";
       
       // Redirect after successful login
       setTimeout(() => {
