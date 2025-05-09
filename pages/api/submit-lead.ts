@@ -16,17 +16,17 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     return res.status(405).json({ error: "Method not allowed" });
   }
 
-  // Validate env variables
-  const supabaseUrl = process.env.SUPABASE_DATABASE_URL;
-  const supabaseKey = process.env.SUPABASE_ANON_KEY;
-
-  if (!supabaseUrl || !supabaseKey) {
-    console.error("Missing Supabase environment variables:", {
-      SUPABASE_DATABASE_URL: supabaseUrl,
-      SUPABASE_ANON_KEY: supabaseKey,
-    });
-    return res.status(500).json({ error: "Supabase environment variables are not set. Check your .env.local and deployment settings." });
-  }
+  // Initialize Supabase client
+let supabase: ReturnType<typeof createClient>;
+try {
+  // Client-side code can only access NEXT_PUBLIC_ prefixed env vars
+  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || "";
+  const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || "";
+  supabase = createClient(supabaseUrl, supabaseAnonKey);
+} catch (error) {
+  console.error("Error initializing Supabase client:", error);
+  throw error;
+}
 
   // Validate request body
   const { vin, make, model, zip, phone, titleInHand } = req.body;
@@ -34,20 +34,11 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     return res.status(400).json({ error: "Missing required fields" });
   }
 
-  // Create Supabase client
-  let supabase: SupabaseClient;
-  try {
-    supabase = createClient(supabaseUrl, supabaseKey);
-  } catch (err) {
-    console.error("Failed to create Supabase client:", err);
-    return res.status(500).json({ error: "Failed to initialize Supabase client." });
-  }
-
   // Insert lead
   try {
     const { error } = await supabase
       .from('leads')
-      .insert<Lead>([{ vin, make, model, zip, phone, title_in_hand: !!titleInHand }]);
+      .insert([{ vin, make, model, zip, phone, title_in_hand: !!titleInHand }]);
     if (error) throw error;
     return res.status(200).json({ success: true });
   } catch (error: any) {

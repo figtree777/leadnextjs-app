@@ -4,9 +4,16 @@ import { createClient } from "@supabase/supabase-js";
 import Link from "next/link";
 
 // Initialize Supabase client
-const supabaseUrl = process.env.SUPABASE_DATABASE_URL || "";
-const supabaseAnonKey = process.env.SUPABASE_ANON_KEY || "";
-const supabase = createClient(supabaseUrl, supabaseAnonKey);
+let supabase: ReturnType<typeof createClient>;
+try {
+  // Client-side code can only access NEXT_PUBLIC_ prefixed env vars
+  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || "";
+  const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || "";
+  supabase = createClient(supabaseUrl, supabaseAnonKey);
+} catch (error) {
+  console.error("Error initializing Supabase client:", error);
+  throw error;
+}
 
 export default function Register() {
   const [form, setForm] = useState({
