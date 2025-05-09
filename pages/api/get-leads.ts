@@ -1,7 +1,5 @@
 import type { NextApiRequest, NextApiResponse } from "next";
-import { Client } from "pg";
-
-import crypto from "crypto";
+import { createClient } from '@supabase/supabase-js';
 
 function validateToken(token: string | undefined) {
   if (!token) return false;
@@ -22,21 +20,20 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     return res.status(401).json({ error: "Unauthorized" });
   }
 
-  const client = new Client({
-    connectionString: process.env.NILE_DB_URI,
-    user: process.env.NILE_DB_USER,
-    password: process.env.NILE_DB_PASSWORD,
-    database: process.env.NILE_DB_NAME,
-  });
+  const supabase = createClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+  );
 
   try {
-    await client.connect();
-    const selectText = `SELECT id, vin, make, model, zip, phone, title_in_hand, submitted_at FROM ${process.env.NILE_DB_COLLECTION} ORDER BY submitted_at DESC`;
-    const result = await client.query(selectText);
-    await client.end();
-    return res.status(200).json({ leads: result.rows });
+    const { data, error } = await supabase
+      .from('leads')
+      .select('*')
+      .order('created_at', { ascending: false });
+    if (error) throw error;
+    return res.status(200).json({ leads: data });
   } catch (error: any) {
-    console.error("Nile DB Query Error:", error);
+    console.error("Supabase Query Error:", error);
     return res.status(500).json({ error: "Database error" });
   }
 }
