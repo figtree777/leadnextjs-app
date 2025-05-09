@@ -20,9 +20,9 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   let supabase;
   try {
     supabase = getSupabaseAdmin();
-  } catch (error) {
+  } catch (error: any) {
     console.error("Error initializing Supabase client:", error);
-    throw error;
+    return res.status(500).json({ error: error.message || "Failed to initialize database connection" });
   }
 
   // Validate request body
