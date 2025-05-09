@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import Link from "next/link";
+import { useRouter } from "next/router";
 
 const THEME_KEY = "theme-preference";
 
@@ -11,7 +12,22 @@ function getSystemTheme(): "light" | "dark" {
 }
 
 export default function Navbar() {
+  const router = useRouter();
   const [theme, setTheme] = useState<Theme>("system");
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  
+  // Check if user is logged in
+  useEffect(() => {
+    const session = localStorage.getItem("session");
+    setIsLoggedIn(!!session);
+  }, []);
+  
+  const handleLogout = () => {
+    localStorage.removeItem("user");
+    localStorage.removeItem("session");
+    setIsLoggedIn(false);
+    router.push("/");
+  };
 
   // Set initial theme based on localStorage or system
   useEffect(() => {
@@ -75,7 +91,60 @@ export default function Navbar() {
         }}>leadnextjs</span>
       </Link>
       
-      <div style={{ display: "flex", alignItems: "center" }}>
+      <div style={{ display: "flex", alignItems: "center", gap: "1rem" }}>
+        {isLoggedIn ? (
+          <>
+            <Link href="/leads">
+              <span style={{
+                color: "var(--text-primary)",
+                fontSize: "0.95rem",
+                fontWeight: 500,
+                cursor: "pointer",
+                padding: "0.5rem 0.8rem",
+                borderRadius: "0.5rem",
+                transition: "all 0.2s ease",
+                background: router.pathname === "/leads" ? "var(--card-bg)" : "transparent",
+                border: router.pathname === "/leads" ? "1px solid var(--border-color)" : "none"
+              }}>
+                Leads Catalog
+              </span>
+            </Link>
+            <button
+              onClick={handleLogout}
+              style={{
+                background: "transparent",
+                color: "var(--text-primary)",
+                border: "1px solid var(--border-color)",
+                borderRadius: "0.5rem",
+                padding: "0.5rem 1rem",
+                cursor: "pointer",
+                fontSize: "0.9rem",
+                fontWeight: 500,
+                transition: "all 0.2s ease"
+              }}
+            >
+              Logout
+            </button>
+          </>
+        ) : (
+          <Link href="/login">
+            <button
+              style={{
+                background: "var(--primary-color, #0070f3)",
+                color: "white",
+                border: "none",
+                borderRadius: "0.5rem",
+                padding: "0.5rem 1rem",
+                cursor: "pointer",
+                fontSize: "0.9rem",
+                fontWeight: 500,
+                transition: "all 0.2s ease"
+              }}
+            >
+              Login
+            </button>
+          </Link>
+        )}
         <div style={{ 
           display: "flex", 
           alignItems: "center", 
