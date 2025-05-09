@@ -22,8 +22,6 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       phone: "5551234567",
       title_in_hand: true,
       submitted_at: new Date().toISOString(),
-      // Add a user_id field to satisfy RLS policies
-      user_id: "00000000-0000-0000-0000-000000000000", // Default system user ID
       is_test: true // Mark as a test lead
     };
     
