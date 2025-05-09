@@ -52,12 +52,12 @@ export default function GetStarted() {
         <main style={{ width: "100%", maxWidth: 400, backgroundColor: "var(--container-bg)", borderRadius: 12, boxShadow: "0 2px 12px rgba(0,0,0,0.06)", padding: "2.5rem 2rem", textAlign: "center" }}>
           <h2 style={{ fontSize: "2rem", fontWeight: 700, marginBottom: "1.5rem" }}>Get Started</h2>
           {error && (
-            <div style={{ color: "#d90429", marginBottom: 16, fontWeight: 600 }}>{error}</div>
+            <div style={{ color: "#d90429", marginBottom: 16, padding: "10px", borderRadius: "6px", backgroundColor: "rgba(217, 4, 41, 0.1)", fontWeight: 600 }}>{error}</div>
           )}
           {submitted ? (
-            <div style={{ color: "#0070f3", fontWeight: 600, textAlign: "left" }}>
+            <div style={{ color: "#0070f3", fontWeight: 600, textAlign: "left", padding: "10px", borderRadius: "6px", backgroundColor: "rgba(0, 112, 243, 0.1)" }}>
               <div>Thank you! Here is your submission:</div>
-              <ul style={{ margin: '1rem 0 0 0', padding: 0, listStyle: 'none', color: '#222', fontWeight: 400 }}>
+              <ul style={{ margin: '1rem 0 0 0', padding: 0, listStyle: 'none', color: 'var(--text-primary)', fontWeight: 400 }}>
                 <li><b>VIN:</b> {form.vin}</li>
                 <li><b>Make:</b> {form.make}</li>
                 <li><b>Model:</b> {form.model}</li>
@@ -69,7 +69,7 @@ export default function GetStarted() {
           ) : (
             <form onSubmit={handleSubmit}>
               <div style={{ marginBottom: "1.25rem", textAlign: "left" }}>
-                <label htmlFor="vin" style={{ display: "block", marginBottom: 6, color: "#333" }}>VIN</label>
+                <label htmlFor="vin" style={{ display: "block", marginBottom: 6, color: "var(--text-primary)" }}>VIN</label>
                 <input
                   type="text"
                   id="vin"
@@ -77,11 +77,11 @@ export default function GetStarted() {
                   value={form.vin}
                   onChange={handleChange}
                   required
-                  style={{ width: "100%", padding: "0.7rem", borderRadius: 6, border: "1px solid #ccc", fontSize: "1rem" }}
+                  style={{ width: "100%", padding: "0.7rem", borderRadius: 6, border: "1px solid var(--border-color)", fontSize: "1rem", backgroundColor: "var(--card-bg)", color: "var(--text-primary)" }}
                 />
               </div>
               <div style={{ marginBottom: "1.25rem", textAlign: "left" }}>
-                <label htmlFor="make" style={{ display: "block", marginBottom: 6, color: "#333" }}>Make</label>
+                <label htmlFor="make" style={{ display: "block", marginBottom: 6, color: "var(--text-primary)" }}>Make</label>
                 <input
                   type="text"
                   id="make"
@@ -89,11 +89,11 @@ export default function GetStarted() {
                   value={form.make}
                   onChange={handleChange}
                   required
-                  style={{ width: "100%", padding: "0.7rem", borderRadius: 6, border: "1px solid #ccc", fontSize: "1rem" }}
+                  style={{ width: "100%", padding: "0.7rem", borderRadius: 6, border: "1px solid var(--border-color)", fontSize: "1rem", backgroundColor: "var(--card-bg)", color: "var(--text-primary)" }}
                 />
               </div>
               <div style={{ marginBottom: "1.25rem", textAlign: "left" }}>
-                <label htmlFor="model" style={{ display: "block", marginBottom: 6, color: "#333" }}>Model</label>
+                <label htmlFor="model" style={{ display: "block", marginBottom: 6, color: "var(--text-primary)" }}>Model</label>
                 <input
                   type="text"
                   id="model"
@@ -101,11 +101,11 @@ export default function GetStarted() {
                   value={form.model}
                   onChange={handleChange}
                   required
-                  style={{ width: "100%", padding: "0.7rem", borderRadius: 6, border: "1px solid #ccc", fontSize: "1rem" }}
+                  style={{ width: "100%", padding: "0.7rem", borderRadius: 6, border: "1px solid var(--border-color)", fontSize: "1rem", backgroundColor: "var(--card-bg)", color: "var(--text-primary)" }}
                 />
               </div>
               <div style={{ marginBottom: "1.25rem", textAlign: "left" }}>
-                <label htmlFor="zip" style={{ display: "block", marginBottom: 6, color: "#333" }}>Zip Code</label>
+                <label htmlFor="zip" style={{ display: "block", marginBottom: 6, color: "var(--text-primary)" }}>Zip Code</label>
                 <input
                   type="text"
                   id="zip"
@@ -115,11 +115,11 @@ export default function GetStarted() {
                   required
                   pattern="\d{5}"
                   maxLength={5}
-                  style={{ width: "100%", padding: "0.7rem", borderRadius: 6, border: "1px solid #ccc", fontSize: "1rem" }}
+                  style={{ width: "100%", padding: "0.7rem", borderRadius: 6, border: "1px solid var(--border-color)", fontSize: "1rem", backgroundColor: "var(--card-bg)", color: "var(--text-primary)" }}
                 />
               </div>
               <div style={{ marginBottom: "1.25rem", textAlign: "left" }}>
-                <label htmlFor="phone" style={{ display: "block", marginBottom: 6, color: "#333" }}>Phone Number</label>
+                <label htmlFor="phone" style={{ display: "block", marginBottom: 6, color: "var(--text-primary)" }}>Phone Number</label>
                 <input
                   type="tel"
                   id="phone"
@@ -129,7 +129,7 @@ export default function GetStarted() {
                   required
                   pattern="[0-9]{10}"
                   maxLength={10}
-                  style={{ width: "100%", padding: "0.7rem", borderRadius: 6, border: "1px solid #ccc", fontSize: "1rem" }}
+                  style={{ width: "100%", padding: "0.7rem", borderRadius: 6, border: "1px solid var(--border-color)", fontSize: "1rem", backgroundColor: "var(--card-bg)", color: "var(--text-primary)" }}
                 />
               </div>
               <div style={{ marginBottom: "1.5rem", textAlign: "left", display: 'flex', alignItems: 'center' }}>
@@ -141,7 +141,7 @@ export default function GetStarted() {
                   onChange={handleChange}
                   style={{ marginRight: 8 }}
                 />
-                <label htmlFor="titleInHand" style={{ color: "#333", margin: 0 }}>Title in Hand?</label>
+                <label htmlFor="titleInHand" style={{ color: "var(--text-primary)", margin: 0 }}>Title in Hand?</label>
               </div>
               <button type="submit" style={{ background: "#0070f3", color: "#fff", padding: "0.75rem 2rem", borderRadius: 8, fontWeight: 600, fontSize: "1.1rem", border: "none", cursor: "pointer", transition: "background 0.2s" }}>Submit</button>
             </form>
