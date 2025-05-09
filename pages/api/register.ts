@@ -27,6 +27,11 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       return res.status(400).json({ error: "Missing required fields" });
     }
     
+    // Get the host from the request headers
+    const host = req.headers.host || '';
+    const protocol = host.includes('localhost') ? 'http' : 'https';
+    const siteUrl = `${protocol}://${host}`;
+    
     // Register the user with Supabase
     const { data, error } = await supabase.auth.signUp({
       email,
@@ -37,7 +42,8 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
           last_name: lastName,
           phone,
           user_type: "buyer" // Tag this user as a buyer
-        }
+        },
+        emailRedirectTo: `${siteUrl}/login` // Redirect to login page after email confirmation
       }
     });
     
