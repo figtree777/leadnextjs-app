@@ -1,5 +1,5 @@
 import type { NextApiRequest, NextApiResponse } from "next";
-import { createClient, SupabaseClient } from '@supabase/supabase-js';
+import { getSupabaseAdmin, handleSupabaseError } from '@/utils/supabase-admin';
 
 interface Lead {
   vin: string;
@@ -17,16 +17,13 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   }
 
   // Initialize Supabase client
-let supabase: ReturnType<typeof createClient>;
-try {
-  // Client-side code can only access NEXT_PUBLIC_ prefixed env vars
-  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || "";
-  const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || "";
-  supabase = createClient(supabaseUrl, supabaseAnonKey);
-} catch (error) {
-  console.error("Error initializing Supabase client:", error);
-  throw error;
-}
+  let supabase;
+  try {
+    supabase = getSupabaseAdmin();
+  } catch (error) {
+    console.error("Error initializing Supabase client:", error);
+    throw error;
+  }
 
   // Validate request body
   const { vin, make, model, zip, phone, titleInHand } = req.body;

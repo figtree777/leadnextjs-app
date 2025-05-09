@@ -1,19 +1,6 @@
 import Head from "next/head";
 import { useState } from "react";
-import { createClient } from "@supabase/supabase-js";
 import Link from "next/link";
-
-// Initialize Supabase client
-let supabase: ReturnType<typeof createClient>;
-try {
-  // Client-side code can only access NEXT_PUBLIC_ prefixed env vars
-  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || "";
-  const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || "";
-  supabase = createClient(supabaseUrl, supabaseAnonKey);
-} catch (error) {
-  console.error("Error initializing Supabase client:", error);
-  throw error;
-}
 
 export default function Register() {
   const [form, setForm] = useState({
@@ -53,26 +40,27 @@ export default function Register() {
     setMessage(null);
     
     try {
-      // Register the user with Supabase
-      const { data, error } = await supabase.auth.signUp({
-        email: form.email,
-        password: form.password,
-        options: {
-          data: {
-            first_name: form.firstName,
-            last_name: form.lastName,
-            phone: form.phone,
-            user_type: "buyer" // Tag this user as a buyer
-          }
-        }
+      // Call our API endpoint for registration
+      const response = await fetch("/api/register", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          email: form.email,
+          password: form.password,
+          firstName: form.firstName,
+          lastName: form.lastName,
+          phone: form.phone
+        })
       });
       
-      if (error) {
-        throw error;
+      const data = await response.json();
+      
+      if (!response.ok) {
+        throw new Error(data.error || "Registration failed");
       }
       
       setMessage({ 
-        text: "Registration successful! Please check your email to confirm your account.", 
+        text: data.message || "Registration successful! Please check your email to confirm your account.", 
         type: "success" 
       });
       
