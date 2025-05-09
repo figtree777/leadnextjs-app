@@ -23,7 +23,7 @@ export default function Home() {
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <div className={`${styles.page} ${geistSans.variable} ${geistMono.variable}`}
-        style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center', background: '#f8fafc' }}>
+        style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center' }}>
         <main className={styles.main} style={{ width: '100%', maxWidth: 600, textAlign: 'center', padding: '4rem 2rem' }}>
           <h1 style={{ fontSize: '3rem', fontWeight: 700, marginBottom: '1rem', letterSpacing: '-1px' }}>leadnextjs</h1>
           <p style={{ fontSize: '1.25rem', color: '#555', marginBottom: '2rem' }}>
