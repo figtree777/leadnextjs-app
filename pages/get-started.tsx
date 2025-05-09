@@ -48,8 +48,8 @@ export default function GetStarted() {
         <title>Get Started | leadnextjs</title>
         <meta name="description" content="Get started with leadnextjs" />
       </Head>
-      <div style={{ minHeight: "100vh", display: "flex", flexDirection: "column", justifyContent: "center", alignItems: "center", background: "#f8fafc" }}>
-        <main style={{ width: "100%", maxWidth: 400, background: "#fff", borderRadius: 12, boxShadow: "0 2px 12px rgba(0,0,0,0.06)", padding: "2.5rem 2rem", textAlign: "center" }}>
+      <div style={{ minHeight: "100vh", display: "flex", flexDirection: "column", justifyContent: "center", alignItems: "center" }}>
+        <main style={{ width: "100%", maxWidth: 400, backgroundColor: "var(--container-bg)", borderRadius: 12, boxShadow: "0 2px 12px rgba(0,0,0,0.06)", padding: "2.5rem 2rem", textAlign: "center" }}>
           <h2 style={{ fontSize: "2rem", fontWeight: 700, marginBottom: "1.5rem" }}>Get Started</h2>
           {error && (
             <div style={{ color: "#d90429", marginBottom: 16, fontWeight: 600 }}>{error}</div>
